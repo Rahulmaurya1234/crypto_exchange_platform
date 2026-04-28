@@ -1,0 +1,61 @@
+{
+  "auth": {
+    "loginSuccess": "Login successful",
+    "logoutSuccess": "Logged out successfully",
+    "registerSuccess": "Registration successful",
+    "otpSent": "OTP sent to {{destination}}",
+    "otpVerified": "OTP verified successfully",
+    "passwordReset": "Password reset successfully",
+    "tokenRefreshed": "Access token refreshed"
+  },
+  "kyc": {
+    "submitted": "KYC documents submitted successfully",
+    "approved": "KYC approved",
+    "rejected": "KYC rejected: {{reason}}",
+    "resubmitRequired": "Please resubmit your KYC documents"
+  },
+  "listing": {
+    "created": "Listing created successfully",
+    "updated": "Listing updated successfully",
+    "deleted": "Listing deleted successfully",
+    "paused": "Listing paused",
+    "resumed": "Listing resumed"
+  },
+  "trade": {
+    "initiated": "Trade initiated successfully",
+    "escrowLocked": "USDT locked in escrow",
+    "paymentProofUploaded": "Payment proof uploaded successfully",
+    "completed": "Trade completed successfully",
+    "cancelled": "Trade cancelled",
+    "disputeCreated": "Dispute created successfully"
+  },
+  "chat": {
+    "messageSent": "Message sent",
+    "messageDeleted": "Message deleted"
+  },
+  "payment": {
+    "proofUploaded": "Payment proof uploaded successfully",
+    "confirmed": "Payment confirmed",
+    "rejected": "Payment rejected"
+  },
+  "escrow": {
+    "deposited": "{{amount}} USDT deposited to escrow",
+    "released": "{{amount}} USDT released to buyer",
+    "refunded": "{{amount}} USDT refunded to seller"
+  },
+  "dispute": {
+    "created": "Dispute created successfully",
+    "assigned": "Dispute assigned to support team",
+    "resolved": "Dispute resolved",
+    "closed": "Dispute closed"
+  },
+  "user": {
+    "profileUpdated": "Profile updated successfully",
+    "statusChanged": "User status changed to {{status}}",
+    "roleChanged": "User role changed to {{role}}"
+  },
+  "notification": {
+    "sent": "Notification sent successfully",
+    "markedRead": "Notification marked as read"
+  }
+}

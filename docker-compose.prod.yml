@@ -1,0 +1,82 @@
+services:
+  # Gateway for client/admin frontend traffic
+  gateway:
+    image: nginx:1.27-alpine
+    container_name: cryptians-gateway
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "127.0.0.1:${CLIENT_GATEWAY_PORT:-8080}:80"
+      - "127.0.0.1:${ADMIN_GATEWAY_PORT:-8081}:81"
+    depends_on:
+      - client
+      - admin
+      - server
+    networks:
+      - cryptians-network
+    restart: unless-stopped
+
+  # Backend API
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: cryptians-server-prod
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+    env_file:
+      - ./server/.env
+    ports:
+      - "127.0.0.1:${SERVER_PORT:-5000}:5000"
+    depends_on:
+      - redis
+    networks:
+      - cryptians-network
+    restart: unless-stopped
+
+  # Internal Redis
+  redis:
+    image: redis:7-alpine
+    container_name: cryptians-redis-prod
+    command: ["sh", "-c", "redis-server --appendonly yes --requirepass \"$$REDIS_PASSWORD\""]
+    env_file:
+      - ./server/.env
+    volumes:
+      - redis-data:/data
+    networks:
+      - cryptians-network
+    restart: unless-stopped
+
+  # Public frontend
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${PUBLIC_API_ORIGIN}
+    container_name: cryptians-client-prod
+    networks:
+      - cryptians-network
+    restart: unless-stopped
+
+  # Admin frontend
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${PUBLIC_API_ORIGIN}
+        VITE_API_BASE_URL: ${PUBLIC_API_ORIGIN}
+    container_name: cryptians-admin-prod
+    networks:
+      - cryptians-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+
+networks:
+  cryptians-network:
+    driver: bridge

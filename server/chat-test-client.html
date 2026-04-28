@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Test Client - Socket.IO Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .user-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px solid #e0e0e0;
+        }
+
+        .user-section:last-child {
+            border-right: none;
+        }
+
+        .user-header {
+            background: #f5f5f5;
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .user-header h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .login-form {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .login-form input {
+            flex: 1;
+            min-width: 120px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .login-form button {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .login-form button:hover {
+            background: #5568d3;
+        }
+
+        .login-form button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .connection-status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .connection-status.connected {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .connection-status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+        }
+
+        .chat-info {
+            padding: 10px 15px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+        }
+
+        .chat-info input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .chat-info button {
+            margin-top: 8px;
+            width: 100%;
+            padding: 6px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .chat-info button:hover {
+            background: #218838;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-info {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .typing-indicator {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            padding: 5px 15px;
+            display: none;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .message-input {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .message-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+
+        .message-input button {
+            padding: 10px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .message-input button:hover {
+            background: #5568d3;
+        }
+
+        .message-input button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .system-message {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            font-style: italic;
+            padding: 5px;
+        }
+
+        .event-log {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+            padding: 10px;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .event-log div {
+            margin-bottom: 3px;
+            color: #666;
+        }
+
+        .event-log .event-time {
+            color: #999;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Chat Test Client - Socket.IO Real-Time Testing</h1>
+            <p>Test your P2P chat system with two users side-by-side</p>
+        </div>
+
+        <div class="main-content">
+            <!-- User A Section -->
+            <div class="user-section">
+                <div class="user-header">
+                    <h2>👤 User A</h2>
+                    <div class="login-form">
+                        <input type="text" id="emailA" placeholder="Email" value="user1@example.com">
+                        <input type="password" id="passwordA" placeholder="Password" value="password123">
+                        <button onclick="loginUser('A')">Login</button>
+                    </div>
+                    <div id="statusA" class="connection-status"></div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-info">
+                        <input type="text" id="chatIdA" placeholder="Enter Chat ID">
+                        <button onclick="joinChat('A')">Join Chat Room</button>
+                    </div>
+
+                    <div id="messagesA" class="messages">
+                        <div class="system-message">Login and join a chat room to start messaging</div>
+                    </div>
+
+                    <div id="typingA" class="typing-indicator">Other user is typing...</div>
+
+                    <div class="message-input">
+                        <input type="text" id="inputA" placeholder="Type a message..." disabled
+                               onkeypress="handleKeyPress(event, 'A')"
+                               oninput="handleTyping('A')">
+                        <button onclick="sendMessage('A')" disabled id="sendBtnA">Send</button>
+                    </div>
+
+                    <div id="eventLogA" class="event-log"></div>
+                </div>
+            </div>
+
+            <!-- User B Section -->
+            <div class="user-section">
+                <div class="user-header">
+                    <h2>👤 User B</h2>
+                    <div class="login-form">
+                        <input type="text" id="emailB" placeholder="Email" value="user2@example.com">
+                        <input type="password" id="passwordB" placeholder="Password" value="password123">
+                        <button onclick="loginUser('B')">Login</button>
+                    </div>
+                    <div id="statusB" class="connection-status"></div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-info">
+                        <input type="text" id="chatIdB" placeholder="Enter Chat ID">
+                        <button onclick="joinChat('B')">Join Chat Room</button>
+                    </div>
+
+                    <div id="messagesB" class="messages">
+                        <div class="system-message">Login and join a chat room to start messaging</div>
+                    </div>
+
+                    <div id="typingB" class="typing-indicator">Other user is typing...</div>
+
+                    <div class="message-input">
+                        <input type="text" id="inputB" placeholder="Type a message..." disabled
+                               onkeypress="handleKeyPress(event, 'B')"
+                               oninput="handleTyping('B')">
+                        <button onclick="sendMessage('B')" disabled id="sendBtnB">Send</button>
+                    </div>
+
+                    <div id="eventLogB" class="event-log"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const SERVER_URL = 'http://localhost:5000'; // Change this to your server URL
+        const API_BASE = `${SERVER_URL}/api/v1/platform-a`;
+
+        // State management
+        const state = {
+            A: {
+                socket: null,
+                token: null,
+                userId: null,
+                chatId: null,
+                typingTimeout: null
+            },
+            B: {
+                socket: null,
+                token: null,
+                userId: null,
+                chatId: null,
+                typingTimeout: null
+            }
+        };
+
+        // Utility functions
+        function logEvent(user, message) {
+            const eventLog = document.getElementById(`eventLog${user}`);
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.innerHTML = `<span class="event-time">[${time}]</span>${message}`;
+            eventLog.appendChild(entry);
+            eventLog.scrollTop = eventLog.scrollHeight;
+        }
+
+        function updateStatus(user, connected) {
+            const statusEl = document.getElementById(`status${user}`);
+            if (connected) {
+                statusEl.className = 'connection-status connected';
+                statusEl.textContent = `✓ Connected to Socket.IO`;
+            } else {
+                statusEl.className = 'connection-status disconnected';
+                statusEl.textContent = `✗ Disconnected`;
+            }
+        }
+
+        function addMessage(user, content, isSent, info = '') {
+            const messagesEl = document.getElementById(`messages${user}`);
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${isSent ? 'sent' : 'received'}`;
+
+            let html = `<div>${content}</div>`;
+            if (info) {
+                html += `<div class="message-info">${info}</div>`;
+            }
+
+            messageEl.innerHTML = html;
+            messagesEl.appendChild(messageEl);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function showTyping(user, show) {
+            const typingEl = document.getElementById(`typing${user}`);
+            if (show) {
+                typingEl.classList.add('active');
+            } else {
+                typingEl.classList.remove('active');
+            }
+        }
+
+        // Login function
+        async function loginUser(user) {
+            const email = document.getElementById(`email${user}`).value;
+            const password = document.getElementById(`password${user}`).value;
+
+            if (!email || !password) {
+                alert('Please enter email and password');
+                return;
+            }
+
+            try {
+                logEvent(user, `Logging in as ${email}...`);
+
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                state[user].token = data.data.accessToken;
+                state[user].userId = data.data.user._id;
+
+                logEvent(user, `✓ Login successful! User ID: ${state[user].userId}`);
+
+                // Connect to Socket.IO
+                connectSocket(user);
+
+            } catch (error) {
+                logEvent(user, `✗ Login error: ${error.message}`);
+                alert(`Login failed for User ${user}: ${error.message}`);
+            }
+        }
+
+        // Socket.IO connection
+        function connectSocket(user) {
+            logEvent(user, 'Connecting to Socket.IO...');
+
+            const socket = io(SERVER_URL, {
+                auth: {
+                    token: state[user].token
+                }
+            });
+
+            state[user].socket = socket;
+
+            socket.on('connect', () => {
+                logEvent(user, `✓ Socket connected: ${socket.id}`);
+                updateStatus(user, true);
+            });
+
+            socket.on('disconnect', () => {
+                logEvent(user, '✗ Socket disconnected');
+                updateStatus(user, false);
+            });
+
+            socket.on('connect_error', (error) => {
+                logEvent(user, `✗ Connection error: ${error.message}`);
+                updateStatus(user, false);
+            });
+
+            // Listen for new messages
+            socket.on('message:new', (data) => {
+                logEvent(user, `📨 New message received from ${data.senderId}`);
+
+                // Don't show own messages (already displayed when sent)
+                if (data.senderId !== state[user].userId) {
+                    const time = new Date(data.timestamp).toLocaleTimeString();
+                    addMessage(user, data.content, false, `${time}`);
+                }
+            });
+
+            // Listen for typing indicators
+            socket.on('chat:typing', (data) => {
+                if (data.userId !== state[user].userId) {
+                    logEvent(user, `⌨️ User ${data.userId} typing: ${data.isTyping}`);
+                    showTyping(user, data.isTyping);
+                }
+            });
+
+            // Listen for read receipts
+            socket.on('message:read', (data) => {
+                logEvent(user, `👁️ Message ${data.messageId} read by ${data.userId}`);
+            });
+
+            // Listen for user status
+            socket.on('user:status', (data) => {
+                logEvent(user, `User ${data.userId} is ${data.online ? 'online' : 'offline'}`);
+            });
+        }
+
+        // Join chat room
+        function joinChat(user) {
+            const chatId = document.getElementById(`chatId${user}`).value;
+
+            if (!chatId) {
+                alert('Please enter a Chat ID');
+                return;
+            }
+
+            if (!state[user].socket || !state[user].socket.connected) {
+                alert('Please login first');
+                return;
+            }
+
+            state[user].chatId = chatId;
+
+            logEvent(user, `Joining chat room: ${chatId}`);
+            state[user].socket.emit('chat:join', chatId);
+
+            // Enable message input
+            document.getElementById(`input${user}`).disabled = false;
+            document.getElementById(`sendBtn${user}`).disabled = false;
+
+            // Clear previous messages
+            const messagesEl = document.getElementById(`messages${user}`);
+            messagesEl.innerHTML = '<div class="system-message">✓ Joined chat room. Start messaging!</div>';
+
+            logEvent(user, `✓ Joined chat room: ${chatId}`);
+        }
+
+        // Send message
+        async function sendMessage(user) {
+            const input = document.getElementById(`input${user}`);
+            const content = input.value.trim();
+
+            if (!content) return;
+            if (!state[user].chatId) {
+                alert('Please join a chat room first');
+                return;
+            }
+
+            try {
+                logEvent(user, `Sending message: ${content}`);
+
+                const response = await fetch(`${API_BASE}/chat/${state[user].chatId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state[user].token}`
+                    },
+                    body: JSON.stringify({
+                        content: content,
+                        messageType: 'text'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to send message');
+                }
+
+                logEvent(user, `✓ Message sent successfully`);
+
+                // Add message to UI
+                const time = new Date().toLocaleTimeString();
+                addMessage(user, content, true, time);
+
+                // Clear input
+                input.value = '';
+
+                // Stop typing indicator
+                if (state[user].socket) {
+                    state[user].socket.emit('chat:typing', {
+                        chatId: state[user].chatId,
+                        isTyping: false
+                    });
+                }
+
+            } catch (error) {
+                logEvent(user, `✗ Error sending message: ${error.message}`);
+                alert(`Failed to send message: ${error.message}`);
+            }
+        }
+
+        // Handle typing
+        function handleTyping(user) {
+            if (!state[user].chatId || !state[user].socket) return;
+
+            // Emit typing started
+            state[user].socket.emit('chat:typing', {
+                chatId: state[user].chatId,
+                isTyping: true
+            });
+
+            // Clear existing timeout
+            if (state[user].typingTimeout) {
+                clearTimeout(state[user].typingTimeout);
+            }
+
+            // Set timeout to emit typing stopped
+            state[user].typingTimeout = setTimeout(() => {
+                state[user].socket.emit('chat:typing', {
+                    chatId: state[user].chatId,
+                    isTyping: false
+                });
+            }, 1000);
+        }
+
+        // Handle Enter key press
+        function handleKeyPress(event, user) {
+            if (event.key === 'Enter') {
+                sendMessage(user);
+            }
+        }
+
+        // Initialize
+        console.log('Chat Test Client loaded');
+        console.log(`Server URL: ${SERVER_URL}`);
+        console.log('Instructions:');
+        console.log('1. Login both users');
+        console.log('2. Enter the same Chat ID for both users');
+        console.log('3. Click "Join Chat Room" for both');
+        console.log('4. Start messaging!');
+    </script>
+</body>
+</html>

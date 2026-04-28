@@ -1,0 +1,61 @@
+{
+  "auth": {
+    "loginSuccess": "लॉगिन सफल",
+    "logoutSuccess": "सफलतापूर्वक लॉग आउट किया गया",
+    "registerSuccess": "पंजीकरण सफल",
+    "otpSent": "OTP {{destination}} पर भेजा गया",
+    "otpVerified": "OTP सफलतापूर्वक सत्यापित",
+    "passwordReset": "पासवर्ड सफलतापूर्वक रीसेट किया गया",
+    "tokenRefreshed": "एक्सेस टोकन रिफ्रेश किया गया"
+  },
+  "kyc": {
+    "submitted": "KYC दस्तावेज सफलतापूर्वक जमा किए गए",
+    "approved": "KYC स्वीकृत",
+    "rejected": "KYC अस्वीकृत: {{reason}}",
+    "resubmitRequired": "कृपया अपने KYC दस्तावेज पुनः जमा करें"
+  },
+  "listing": {
+    "created": "सूची सफलतापूर्वक बनाई गई",
+    "updated": "सूची सफलतापूर्वक अपडेट की गई",
+    "deleted": "सूची सफलतापूर्वक हटाई गई",
+    "paused": "सूची रोकी गई",
+    "resumed": "सूची फिर से शुरू की गई"
+  },
+  "trade": {
+    "initiated": "व्यापार सफलतापूर्वक शुरू किया गया",
+    "escrowLocked": "USDT एस्क्रो में लॉक किया गया",
+    "paymentProofUploaded": "भुगतान प्रमाण सफलतापूर्वक अपलोड किया गया",
+    "completed": "व्यापार सफलतापूर्वक पूर्ण हुआ",
+    "cancelled": "व्यापार रद्द किया गया",
+    "disputeCreated": "विवाद सफलतापूर्वक बनाया गया"
+  },
+  "chat": {
+    "messageSent": "संदेश भेजा गया",
+    "messageDeleted": "संदेश हटाया गया"
+  },
+  "payment": {
+    "proofUploaded": "भुगतान प्रमाण सफलतापूर्वक अपलोड किया गया",
+    "confirmed": "भुगतान की पुष्टि की गई",
+    "rejected": "भुगतान अस्वीकार किया गया"
+  },
+  "escrow": {
+    "deposited": "{{amount}} USDT एस्क्रो में जमा किया गया",
+    "released": "{{amount}} USDT खरीदार को जारी किया गया",
+    "refunded": "{{amount}} USDT विक्रेता को वापस किया गया"
+  },
+  "dispute": {
+    "created": "विवाद सफलतापूर्वक बनाया गया",
+    "assigned": "विवाद सहायता टीम को सौंपा गया",
+    "resolved": "विवाद हल हो गया",
+    "closed": "विवाद बंद किया गया"
+  },
+  "user": {
+    "profileUpdated": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई",
+    "statusChanged": "उपयोगकर्ता स्थिति {{status}} में बदली गई",
+    "roleChanged": "उपयोगकर्ता भूमिका {{role}} में बदली गई"
+  },
+  "notification": {
+    "sent": "सूचना सफलतापूर्वक भेजी गई",
+    "markedRead": "सूचना को पढ़े गए के रूप में चिह्नित किया गया"
+  }
+}

@@ -1,0 +1,75 @@
+services:
+  # SERVER SERVICE
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: cryptians-server-dev
+    # Check for node_modules, install if missing, then start dev
+    command: sh -c "npm install && npm run dev -- --host"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=development
+      - REDIS_HOST=redis
+    env_file:
+      - ./server/.env
+    depends_on:
+      - redis
+    networks:
+      - cryptians-network
+
+  # REDIS SERVICE
+  redis:
+    image: redis:alpine
+    container_name: cryptians-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - cryptians-network
+
+  # CLIENT SERVICE
+  client:
+    image: node:20-alpine
+    working_dir: /app
+    container_name: cryptians-client-dev
+    # Check for node_modules, install if missing, then start dev
+    command: sh -c "npm install && npm run dev -- --host"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./client/.env
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    networks:
+      - cryptians-network
+
+  # ADMIN SERVICE
+  admin:
+    image: node:20-alpine
+    working_dir: /app
+    container_name: cryptians-admin-dev
+    # Check for node_modules, install if missing, then start dev
+    command: sh -c "npm install && npm run dev -- --host"
+    volumes:
+      - ./admin:/app
+      - /app/node_modules
+    ports:
+      - "5174:5173"
+    env_file:
+      - ./admin/.env
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    networks:
+      - cryptians-network
+
+networks:
+  cryptians-network:
+    driver: bridge

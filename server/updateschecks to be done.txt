@@ -1,0 +1,61 @@
+updates/checks to be done:
+
+=> Trade schema ke creation me buyer kitni crypto coins lega and seller actually kitni submit krega, dono different fields me store hone hae, and trade schema creation ke time hi store ho jaane chahiye. ( as seller buyer ka amount+platform ki fees combined karke enter krega ). 
+
+=> buyer ke form se Crypto network bhi buyers se enter karwana hae, uske liye mae ek list provide krunga network names ki, vo frontend me buyer ke choose karne ke liye hogi, and jo bhi select krega buyer, vo internally respective schema me store hona chahiye. jo list open hogi vo only options choosing ke liye hogi, vo kabhi bhi change nhi hogi. ( ye network ki list CryptoType ki list nhi hae ).
+
+=> And above schema me ek cryptoType ki field bhi honi chahiye, jisme value iske creation ke time hi fill ho jayegi, ye value after getting filled once, dobara change nhi hogi. and isme value fill karne ke liye respective chat/trade/listing ki schema me se cryptoType fetch karke fill karna hoga. 
+
+=> jab buyer apna form submit krega, to internally current working system ke saath ek function aur run hona hoga ( ye function mae provide karunga ) usme only networktype ( jo ki above schema me store hua tha ) vo input jaega and vo function apne escrow ka us network ke respective ek wallet address output me dega.
+and ye function par trade only one time call hoga. and ye function sync hoga.
+
+=> ye wallet address bhi agar respective schema me store ho rha ho to consistency maintain rhegi(recommended), but extreme cases me avoid kiya jaa skta hae.   
+
+=> ye wallet address hme seller ke deposit crypto vale page me baaki info ke saath hi show karna hae, and ye wallet address ( escrow ka ) copy-able hona chahiye seller ke liye, so that vo easily copy kar ske.
+
+=> seller ke deposit crypto vale page me network bhi show karna better hae, as abhi ke system me use confirmation ke liye network show nhi kar rha hae. 
+
+=> ye provided wallet address and network hi vo info hae jisse seller apni crypto transfer kar skta hae ya karega ( escrow ko). 
+
+=> uske deposit karte hi ( vo ye deposit apne kisi platform ex: metamask ko open karke, usme hmare escrow ke given wallet address and network ko set karke karega ), seller ke paas ek txnHash generate hota hae, vo hi use yha uske verify transaction vale section me enter karke verify click karna hae.
+
+=> current seller ke open page pe ( verify click karne se phle ke ) me koi fundamental changes karne ki need nhi hae, just escrow ka copy-able wallet address and network ( jo ki buyer ne set kia tha ) vo show karna hoga.
+
+=> seller ke verify ( ya confirm deposit ) pe click karte hi, escrow se related schema create honi chahiye ( jo ki ho rhi hongi already ), usme default values enter ho jaani chahiye, jisme kuch values is pure trade ke Trade schema se populate hoga, ( jo ki ho rha hoga ) TXNhash seller ke submit karne par usse lena hae ( jo ki ho rha hoga ) , isme kuch new fields such as network , cryptoType, escrowAddress ( agar Trade schema me store kia gya tha to ), ye sab new fields Trade schema se populate krawana hoga ! 
+
+=> confirm deposit ke call hote hi escrow verification workers, job creaters, etc sab start ho jaane chahiye with proper handling and structure management. as in current system it looks as if they are disconnected.
+
+=> in current structure a very sophisticated system of escrow_workers and their job providers, queue creators etc. have been designed ( 90% done, but not coupled properly in finishing state, have to be done ) as they interact with escrow schema to do their work, but they feels/looks disconnected from the actual outer flow, vo check karke actual flow me integrate karna hoga, as vo hi main escrow automation ko handle karte hae. 
+
+=> mae ek function provide karunga, jo ki input lega cryptoType, escrow address, txnHash, txnType, network, walletAddress , jisme walletAddress according to txnType change hoga ( escrowAddress same rhega ) , agar TxnType deposit hae, to walletAddress me seller ka wallet address jaega, and agar txntype release hae to buyer ka. 
+
+=> is function ke input fields escrow ki schema se hi liye jayenga.
+
+=> ye function hi main vo function hae jo ki actual blockchain se interaction karke btata hae ki txn verified hae ki nhi.
+
+=> so ye function escrow verification ke workers ko supposedly call karna hoga.
+
+=> ye function async hoga, but ye heavy blocking nhi hoga, har call par ye rest call se interaction karega, ye forever blocking ya looping in itself function nhi hoga, ise call karne par ye data fetch karke us time pe bata dega ki verified hae ki nhi, then ye function end ho jayega rerun karne ke liye. 
+
+=> since seller ke crypto transfer karne ke baad se vo usually 10 mins tak le skta hae verification ke liye, but txnHash instant mil jata hae seller ko, seller very possibly phle hi apna txnHash submit karke verification pe click kar skta hae, so hme ye function ( mera provide kia hua ) internally tab tak repeat me call karna hoga jab tak yaa to ye verify confirm na kar de, ya jab tak ye verify rejected na karde ! ( use appropriate time interval to repeat ) as usually ye task job providers, queue insertions, and worker ka hae rather than simple loop.
+
+=> is function ke verify confirm karne ke baad seller->escrow ki crypto transaction totally confirm ho jaati hae ( note koi bhi aur function call ki need nhi hae is particular txn ke confirmation ke liye ) 
+
+
+//// IMPORTANT POINTS /////
+
+
+*** mere provided functions me bhi input and output values ka structure kis format me hona chahiye ( core logic same rhte hue ) so that current system ki consistency maintain rhe, vo discuss krke decide krna hoga.
+
+*** New added systems, structure, ya flow ki different error ya unnatural behavior ki handling ko manage karna hoga.
+
+*** mere provided functions ke output me kis failure pe kya action lena hae vo bhi discuss krna hoga. ( recommended to implement simple system for starters. )
+
+*** In the entire system many tasks, jobs, and work is being done by BullMQ and queue based provider consumer structure. So please maintain those logics with new implemented topics too.
+
+*** different schemas ke statuses different cases me kis way me change hone hae, vo bhi manage karna hoga. 
+
+*** Different situations/conditions/triggers pe kis system me kaese and kya notifaction vagera manage karna hae along with system messages etc . vo sab dekhna and manage karna hoga ! 
+
+
+**************************END OF FILE******************************

@@ -1,0 +1,62 @@
+{
+  "name": "cryptians-server",
+  "version": "1.0.0",
+  "description": "Backend API for Cryptians P2P crypto classifieds (KYC, ads, admin).",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "start": "node src/index.js",
+    "seed:users": "node -r dotenv/config src/seeds/seedUsers.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cryptians",
+    "backend",
+    "express",
+    "nodejs",
+    "mongo",
+    "kyc",
+    "classifieds"
+  ],
+  "author": "Govind Ghosh",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.972.0",
+    "@aws-sdk/s3-presigned-post": "^3.943.0",
+    "@aws-sdk/s3-request-presigner": "^3.972.0",
+    "@sendgrid/mail": "^8.1.6",
+    "aws-sdk": "^2.1692.0",
+    "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.2",
+    "bullmq": "^5.0.0",
+    "cookie": "^1.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "helmet": "^8.1.0",
+    "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.0",
+    "mongoose-paginate-v2": "^1.9.1",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "multer-s3": "^3.0.1",
+    "nodemailer": "^7.0.11",
+    "redis": "^4.6.12",
+    "socket.io": "^4.8.3",
+    "twilio": "^4.23.0",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "prettier": "^3.6.0"
+  }
+}

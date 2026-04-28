@@ -1,0 +1,304 @@
+// src/models/User.model.js
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { ROLES, ACCOUNT_STATUS, KYC_STATUS, KYC_LEVEL } from "../constants/index.js";
+import { jwtConfig } from "../config/jwt.config.js";
+
+const { Schema } = mongoose;
+
+// -----------------------------
+// Validators
+// -----------------------------
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const indianPincodeRegex = /^[1-9][0-9]{5}$/;
+const mobileRegex = /^[0-9]{10,15}$/; // allow international if needed
+
+// -----------------------------
+// KYC subdocument
+// -----------------------------
+const KYCSchema = new Schema(
+  {
+    aadharNumber: {
+      type: String,
+      trim: true,
+      minlength: 4,
+      maxlength: 20,
+    },
+    aadharImageUrl: {
+      type: String, // S3 or local URL
+      trim: true,
+    },
+    panNumber: {
+      type: String,
+      trim: true,
+      minlength: 4,
+      maxlength: 15,
+    },
+    panImageUrl: {
+      type: String, // S3 or local URL
+      trim: true,
+    },
+    reference1Name: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+    },
+    reference1Mobile: {
+      type: String,
+      trim: true,
+      match: mobileRegex,
+    },
+    reference2Name: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+    },
+    reference2Mobile: {
+      type: String,
+      trim: true,
+      match: mobileRegex,
+    },
+  },
+  { _id: false }
+);
+
+// -----------------------------
+// User schema
+// -----------------------------
+const userSchema = new Schema(
+  {
+    // Core auth / profile
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 120,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+      validate: {
+        validator: (v) => emailRegex.test(v),
+        message: "Invalid email format",
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 8,
+      select: false, // never return by default
+    },
+
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 255,
+    },
+    state: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 80,
+    },
+    city: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 80,
+    },
+    pincode: {
+      type: String,
+      required: true,
+      trim: true,
+      match: indianPincodeRegex,
+    },
+
+    mobileNumber: {
+      type: String,
+      required: true,
+      trim: true,
+      match: mobileRegex,
+    },
+    altMobileNumber: {
+      type: String,
+      trim: true,
+      validate: {
+        validator: (v) => !v || mobileRegex.test(v),
+        message: "Invalid alternate mobile number",
+      },
+    },
+
+    gender: {
+      type: String,
+      enum: ["male", "female", "other", "prefer_not_to_say"],
+      required: true,
+    },
+
+    // Roles & account status
+    role: {
+      type: String,
+      enum: Object.values(USER_ROLES),
+      default: USER_ROLES.USER,
+      index: true,
+    },
+    accountStatus: {
+      type: String,
+      enum: Object.values(ACCOUNT_STATUSES),
+      default: ACCOUNT_STATUSES.ACTIVE,
+      index: true,
+    },
+
+    // KYC status & metadata
+    kycStatus: {
+      type: String,
+      enum: Object.values(KYC_STATUSES),
+      default: KYC_STATUSES.NOT_SUBMITTED,
+      index: true,
+    },
+    kyc: KYCSchema,
+
+    kycSubmittedAt: {
+      type: Date,
+    },
+    kycReviewedAt: {
+      type: Date,
+    },
+    kycReviewedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User", // admin who approved/rejected
+    },
+    kycRejectionReason: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
+
+    // Misc / audit
+    lastLoginAt: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,
+    strict: "throw", // reject unknown fields → surfaces bugs early
+    minimize: false, // keep empty objects (e.g., kyc) if you set them
+    versionKey: false, // drop __v
+  }
+);
+
+// -----------------------------
+// Indexes
+// -----------------------------
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ role: 1, kycStatus: 1 });
+userSchema.index({ accountStatus: 1 });
+
+// -----------------------------
+// Hooks
+// -----------------------------
+userSchema.pre("save", function () {
+  if (this.isModified("email") && this.email) {
+    this.email = this.email.toLowerCase().trim();
+  }
+
+  if (this.isModified("mobileNumber") && this.mobileNumber) {
+    this.mobileNumber = this.mobileNumber.trim();
+  }
+
+  if (this.isModified("altMobileNumber") && this.altMobileNumber) {
+    this.altMobileNumber = this.altMobileNumber.trim();
+  }
+});
+
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  const salt = await bcrypt.genSalt(12);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// -----------------------------
+// Instance methods
+// -----------------------------
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  if (!this.password) return false; // make sure you selected "+password" where needed
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+userSchema.methods.isActive = function () {
+  return this.accountStatus === ACCOUNT_STATUSES.ACTIVE;
+};
+
+userSchema.methods.isKycApproved = function () {
+  return this.kycStatus === KYC_STATUSES.APPROVED;
+};
+
+userSchema.methods.isKycSubmitted = function () {
+  return (
+    this.kycStatus === KYC_STATUSES.SUBMITTED ||
+    this.kycStatus === KYC_STATUSES.APPROVED
+  );
+};
+
+// JWT helpers
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      sub: this._id.toString(),
+      role: this.role,
+      kycStatus: this.kycStatus,
+    },
+    JWT_SECRET,
+    { expiresIn: ACCESS_TOKEN_EXPIRES_IN }
+  );
+};
+
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      sub: this._id.toString(),
+      tokenType: "refresh",
+    },
+    REFRESH_JWT_SECRET,
+    { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
+  );
+};
+
+// Safe JSON output
+userSchema.set("toJSON", {
+  virtuals: true,
+  transform: (_doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    return ret;
+  },
+});
+
+userSchema.set("toObject", {
+  virtuals: true,
+});
+
+// Explicit safe helper
+userSchema.methods.toSafeObject = function () {
+  return this.toJSON();
+};
+
+// -----------------------------
+// Statics
+// -----------------------------
+userSchema.statics.findActiveByEmail = function (email) {
+  return this.findOne({
+    email: email.toLowerCase().trim(),
+    accountStatus: { $ne: ACCOUNT_STATUSES.DELETED },
+  });
+};
+
+const User = mongoose.model("User", userSchema);
+
+export default User;

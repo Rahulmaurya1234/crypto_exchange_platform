@@ -1,0 +1,2851 @@
+{
+  "info": {
+    "name": "P2P Crypto Trading Platform - Complete API",
+    "description": "Complete Postman collection for testing all API endpoints with fake data",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345678"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "listingId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tradeId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "chatId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "disputeId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "PLATFORM A - User Facing",
+      "item": [
+        {
+          "name": "1. Authentication",
+          "item": [
+            {
+              "name": "Register New User (Buyer)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.data && response.data.accessToken) {",
+                      "        pm.environment.set('accessToken', response.data.accessToken);",
+                      "        pm.environment.set('refreshToken', response.data.refreshToken);",
+                      "    }",
+                      "    if (response.data && response.data.user) {",
+                      "        pm.environment.set('userId', response.data.user._id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.buyer@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"mobileNumber\": \"+919876543210\",\n  \"role\": \"buyer\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/register",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "register"]
+                },
+                "description": "Register a new buyer user"
+              },
+              "response": []
+            },
+            {
+              "name": "Register New User (Seller)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane.seller@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"mobileNumber\": \"+919876543211\",\n  \"role\": \"seller\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/register",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "register"]
+                },
+                "description": "Register a new seller user"
+              },
+              "response": []
+            },
+            {
+              "name": "Verify OTP",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.buyer@example.com\",\n  \"otp\": \"123456\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/verify-otp",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "verify-otp"]
+                },
+                "description": "Verify OTP code sent to email"
+              },
+              "response": []
+            },
+            {
+              "name": "Login User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.data && response.data.accessToken) {",
+                      "        pm.environment.set('accessToken', response.data.accessToken);",
+                      "        pm.environment.set('refreshToken', response.data.refreshToken);",
+                      "    }",
+                      "    if (response.data && response.data.user) {",
+                      "        pm.environment.set('userId', response.data.user._id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.buyer@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "login"]
+                },
+                "description": "Login with email and password"
+              },
+              "response": []
+            },
+            {
+              "name": "Refresh Token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.data && response.data.accessToken) {",
+                      "        pm.environment.set('accessToken', response.data.accessToken);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/refresh",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "refresh"]
+                },
+                "description": "Refresh access token using refresh token"
+              },
+              "response": []
+            },
+            {
+              "name": "Logout",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/logout",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "logout"]
+                },
+                "description": "Logout current user"
+              },
+              "response": []
+            },
+            {
+              "name": "Forgot Password",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.buyer@example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/forgot-password",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "forgot-password"]
+                },
+                "description": "Request password reset OTP"
+              },
+              "response": []
+            },
+            {
+              "name": "Reset Password",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.buyer@example.com\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"NewSecurePass123!\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/reset-password",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "reset-password"]
+                },
+                "description": "Reset password with OTP"
+              },
+              "response": []
+            },
+            {
+              "name": "Resend OTP",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.buyer@example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/resend-otp",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "resend-otp"]
+                },
+                "description": "Resend OTP code"
+              },
+              "response": []
+            },
+            {
+              "name": "Change Password",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currentPassword\": \"SecurePass123!\",\n  \"newPassword\": \"NewSecurePass456!\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/auth/change-password",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "auth", "change-password"]
+                },
+                "description": "Change password for logged in user"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "2. User Profile",
+          "item": [
+            {
+              "name": "Get Own Profile",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/users/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "users", "profile"]
+                },
+                "description": "Get current user's profile"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Own Profile",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"John Doe Updated\",\n  \"bio\": \"Experienced crypto trader\",\n  \"address\": \"123 Main Street\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"pincode\": \"400001\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/users/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "users", "profile"]
+                },
+                "description": "Update current user's profile"
+              },
+              "response": []
+            },
+            {
+              "name": "Get User By ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/users/{{userId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "users", "{{userId}}"]
+                },
+                "description": "Get public profile of any user"
+              },
+              "response": []
+            },
+            {
+              "name": "Get User Reviews",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/users/{{userId}}/reviews",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "users", "{{userId}}", "reviews"]
+                },
+                "description": "Get reviews for a user"
+              },
+              "response": []
+            },
+            {
+              "name": "Add Review For User",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tradeId\": \"{{tradeId}}\",\n  \"rating\": 5,\n  \"comment\": \"Great seller! Fast and reliable.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/users/{{userId}}/reviews",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "users", "{{userId}}", "reviews"]
+                },
+                "description": "Add review for a user after trade"
+              },
+              "response": []
+            },
+            {
+              "name": "Get User Stats",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/users/{{userId}}/stats",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "users", "{{userId}}", "stats"]
+                },
+                "description": "Get statistics for a user"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Own Account",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/users/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "users", "profile"]
+                },
+                "description": "Delete current user's account"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "3. KYC Verification",
+          "item": [
+            {
+              "name": "Submit KYC",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"kycLevel\": \"level_2\",\n  \"idType\": \"aadhaar\",\n  \"idNumber\": \"1234-5678-9012\",\n  \"idFrontUrl\": \"https://example.com/uploads/aadhaar-front.jpg\",\n  \"idBackUrl\": \"https://example.com/uploads/aadhaar-back.jpg\",\n  \"selfieUrl\": \"https://example.com/uploads/selfie.jpg\",\n  \"addressProofUrl\": \"https://example.com/uploads/address-proof.jpg\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/kyc/submit",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "kyc", "submit"]
+                },
+                "description": "Submit KYC documents for verification"
+              },
+              "response": []
+            },
+            {
+              "name": "Get KYC Status",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/kyc/status",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "kyc", "status"]
+                },
+                "description": "Get current user's KYC status"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "4. Listings",
+          "item": [
+            {
+              "name": "Create Listing",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.data && response.data.listing) {",
+                      "        pm.environment.set('listingId', response.data.listing._id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cryptoType\": \"USDT\",\n  \"totalAmount\": 50000,\n  \"pricePerUnit\": 95.40,\n  \"minTradeLimit\": 1000,\n  \"maxTradeLimit\": 100000,\n  \"timeLimit\": 30,\n  \"paymentMethods\": [\"Bank Transfer\", \"UPI\"],\n  \"termsAndConditions\": \"Payment within 30 minutes. No third-party payments.\",\n  \"isInstantSeller\": false\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/listings",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "listings"]
+                },
+                "description": "Create new listing (seller only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Search Listings",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/listings?cryptoType=USDT&minAmount=1000&maxAmount=50000&paymentMethod=UPI&sortBy=pricePerUnit&order=asc",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "listings"],
+                  "query": [
+                    {
+                      "key": "cryptoType",
+                      "value": "USDT"
+                    },
+                    {
+                      "key": "minAmount",
+                      "value": "1000"
+                    },
+                    {
+                      "key": "maxAmount",
+                      "value": "50000"
+                    },
+                    {
+                      "key": "paymentMethod",
+                      "value": "UPI"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "pricePerUnit"
+                    },
+                    {
+                      "key": "order",
+                      "value": "asc"
+                    }
+                  ]
+                },
+                "description": "Search and filter listings"
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Listings",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/listings/my-listings",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "listings", "my-listings"]
+                },
+                "description": "Get current user's listings"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Listing By ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/listings/{{listingId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "listings", "{{listingId}}"]
+                },
+                "description": "Get listing details by ID"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Listing",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pricePerUnit\": 95.50,\n  \"availableAmount\": 45000,\n  \"termsAndConditions\": \"Updated terms: Payment within 30 minutes.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/listings/{{listingId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "listings", "{{listingId}}"]
+                },
+                "description": "Update listing details"
+              },
+              "response": []
+            },
+            {
+              "name": "Pause Listing",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/listings/{{listingId}}/pause",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "listings", "{{listingId}}", "pause"]
+                },
+                "description": "Pause listing"
+              },
+              "response": []
+            },
+            {
+              "name": "Resume Listing",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/listings/{{listingId}}/resume",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "listings", "{{listingId}}", "resume"]
+                },
+                "description": "Resume paused listing"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Listing",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/listings/{{listingId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "listings", "{{listingId}}"]
+                },
+                "description": "Delete listing"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "5. Trades",
+          "item": [
+            {
+              "name": "Calculate Order Amount",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades/calculate?listingId={{listingId}}&cryptoAmount=10000",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades", "calculate"],
+                  "query": [
+                    {
+                      "key": "listingId",
+                      "value": "{{listingId}}"
+                    },
+                    {
+                      "key": "cryptoAmount",
+                      "value": "10000"
+                    }
+                  ]
+                },
+                "description": "Calculate order amount with live price and fees"
+              },
+              "response": []
+            },
+            {
+              "name": "Initiate Trade",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.data && response.data.trade) {",
+                      "        pm.environment.set('tradeId', response.data.trade._id);",
+                      "        pm.environment.set('chatId', response.data.trade.chatId);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"listingId\": \"{{listingId}}\",\n  \"cryptoAmount\": 10000,\n  \"buyerWalletAddress\": \"0x1234567890abcdef1234567890abcdef12345678\",\n  \"paymentMethod\": \"UPI\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades"]
+                },
+                "description": "Initiate new trade (buyer)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Trade Stats",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades/stats",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades", "stats"]
+                },
+                "description": "Get user's trade statistics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Trades",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades?page=1&limit=10&status=active",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    }
+                  ]
+                },
+                "description": "Get user's trades with filters"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Trade By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades/{{tradeId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades", "{{tradeId}}"]
+                },
+                "description": "Get trade details by ID"
+              },
+              "response": []
+            },
+            {
+              "name": "Submit Deposit Hash (Seller)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"transactionHash\": \"0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades/{{tradeId}}/submit-deposit",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades", "{{tradeId}}", "submit-deposit"]
+                },
+                "description": "Seller submits blockchain deposit transaction hash"
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Payment Proof (Buyer)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"utrNumber\": \"UTR123456789012\",\n  \"proofUrl\": \"https://example.com/uploads/payment-proof.jpg\",\n  \"amountPaid\": 954000,\n  \"remarks\": \"Payment made via UPI\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades/{{tradeId}}/upload-payment",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades", "{{tradeId}}", "upload-payment"]
+                },
+                "description": "Buyer uploads payment proof"
+              },
+              "response": []
+            },
+            {
+              "name": "Mark Payment Credited (Seller)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"remarks\": \"Payment received successfully\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades/{{tradeId}}/mark-credited",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades", "{{tradeId}}", "mark-credited"]
+                },
+                "description": "Seller confirms INR payment received"
+              },
+              "response": []
+            },
+            {
+              "name": "Mark Payment NOT Credited (Seller)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Payment not received in bank account\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades/{{tradeId}}/mark-not-credited",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades", "{{tradeId}}", "mark-not-credited"]
+                },
+                "description": "Seller marks payment NOT received (creates dispute)"
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Trade",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Changed my mind\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/trades/{{tradeId}}/cancel",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "trades", "{{tradeId}}", "cancel"]
+                },
+                "description": "Cancel trade"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "6. Chat & Messages",
+          "item": [
+            {
+              "name": "Get Unread Count",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/chat/unread/count",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "chat", "unread", "count"]
+                },
+                "description": "Get unread message count"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Chat By Trade ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/chat/trade/{{tradeId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "chat", "trade", "{{tradeId}}"]
+                },
+                "description": "Get chat by trade ID"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All User Chats",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/chat",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "chat"]
+                },
+                "description": "Get all chats for current user"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Chat By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/chat/{{chatId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "chat", "{{chatId}}"]
+                },
+                "description": "Get chat by ID"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Chat Messages",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/chat/{{chatId}}/messages?page=1&limit=50",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "chat", "{{chatId}}", "messages"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    }
+                  ]
+                },
+                "description": "Get messages for a chat"
+              },
+              "response": []
+            },
+            {
+              "name": "Send Message",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"content\": \"Hello! I'm interested in this trade.\",\n  \"messageType\": \"text\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/chat/{{chatId}}/messages",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "chat", "{{chatId}}", "messages"]
+                },
+                "description": "Send message in chat"
+              },
+              "response": []
+            },
+            {
+              "name": "Mark Chat As Read",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/chat/{{chatId}}/read",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "chat", "{{chatId}}", "read"]
+                },
+                "description": "Mark all messages as read"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "7. Wallet Management",
+          "item": [
+            {
+              "name": "Get Wallet Info",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/wallet",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "wallet"]
+                },
+                "description": "Get wallet information"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Escrow Info",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/wallet/escrow",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "wallet", "escrow"]
+                },
+                "description": "Get escrow deposit info"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Crypto Wallet Address",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"walletAddress\": \"0x1234567890abcdef1234567890abcdef12345678\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/wallet/crypto-address",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "wallet", "crypto-address"]
+                },
+                "description": "Update crypto wallet address"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Bank Details",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"accountHolderName\": \"John Doe\",\n  \"accountNumber\": \"1234567890\",\n  \"ifscCode\": \"HDFC0001234\",\n  \"bankName\": \"HDFC Bank\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/wallet/bank-details",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "wallet", "bank-details"]
+                },
+                "description": "Update bank details"
+              },
+              "response": []
+            },
+            {
+              "name": "Add UPI ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"upiId\": \"johndoe@paytm\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/wallet/upi",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "wallet", "upi"]
+                },
+                "description": "Add UPI ID"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Instant Seller Balance",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/wallet/instant-seller/balance",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "wallet", "instant-seller", "balance"]
+                },
+                "description": "Get instant seller escrow balance (instant sellers only)"
+              },
+              "response": []
+            },
+            {
+              "name": "Deposit to Instant Seller Balance",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100000,\n  \"transactionHash\": \"0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/wallet/instant-seller/deposit",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "wallet", "instant-seller", "deposit"]
+                },
+                "description": "Deposit USDT to instant seller balance"
+              },
+              "response": []
+            },
+            {
+              "name": "Withdraw from Instant Seller Balance",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 50000,\n  \"walletAddress\": \"0x1234567890abcdef1234567890abcdef12345678\",\n  \"transactionHash\": \"0xfedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-a/wallet/instant-seller/withdraw",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-a", "wallet", "instant-seller", "withdraw"]
+                },
+                "description": "Withdraw from instant seller balance"
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PLATFORM B - Admin & Support",
+      "item": [
+        {
+          "name": "1. Admin Authentication",
+          "item": [
+            {
+              "name": "Register Admin",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"AdminPass123!\",\n  \"role\": \"admin\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/auth/register",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "auth", "register"]
+                },
+                "description": "Register new admin user"
+              },
+              "response": []
+            },
+            {
+              "name": "Admin Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.data && response.data.accessToken) {",
+                      "        pm.environment.set('adminToken', response.data.accessToken);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"AdminPass123!\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "auth", "login"]
+                },
+                "description": "Admin login"
+              },
+              "response": []
+            },
+            {
+              "name": "Admin Refresh Token",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/auth/refresh",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "auth", "refresh"]
+                },
+                "description": "Refresh admin access token"
+              },
+              "response": []
+            },
+            {
+              "name": "Admin Logout",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/auth/logout",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "auth", "logout"]
+                },
+                "description": "Admin logout"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "2. Admin Dashboard & Users",
+          "item": [
+            {
+              "name": "Get Dashboard Stats",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/stats",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "stats"]
+                },
+                "description": "Get platform dashboard statistics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Users",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/users?page=1&limit=20&search=john&role=buyer",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "users"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "search",
+                      "value": "john"
+                    },
+                    {
+                      "key": "role",
+                      "value": "buyer"
+                    }
+                  ]
+                },
+                "description": "Get all users with filters"
+              },
+              "response": []
+            },
+            {
+              "name": "Get User By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/users/{{userId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "users", "{{userId}}"]
+                },
+                "description": "Get user details by ID"
+              },
+              "response": []
+            },
+            {
+              "name": "Suspend User",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Suspicious activity detected\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/users/{{userId}}/suspend",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "users", "{{userId}}", "suspend"]
+                },
+                "description": "Suspend user account"
+              },
+              "response": []
+            },
+            {
+              "name": "Unsuspend User",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/users/{{userId}}/unsuspend",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "users", "{{userId}}", "unsuspend"]
+                },
+                "description": "Unsuspend user account"
+              },
+              "response": []
+            },
+            {
+              "name": "Ban User",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Fraudulent activity confirmed\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/users/{{userId}}/ban",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "users", "{{userId}}", "ban"]
+                },
+                "description": "Ban user permanently"
+              },
+              "response": []
+            },
+            {
+              "name": "Approve Instant Seller",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/users/{{userId}}/approve-instant-seller",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "users", "{{userId}}", "approve-instant-seller"]
+                },
+                "description": "Approve user as instant seller"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Pending KYCs",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/kyc/pending",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "kyc", "pending"]
+                },
+                "description": "Get pending KYC submissions"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All KYCs",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/kyc?page=1&limit=20",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "kyc"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                },
+                "description": "Get all KYC submissions"
+              },
+              "response": []
+            },
+            {
+              "name": "Review KYC (Approve)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"action\": \"approve\",\n  \"remarks\": \"All documents verified successfully\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/kyc/{{userId}}/review",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "kyc", "{{userId}}", "review"]
+                },
+                "description": "Approve KYC submission"
+              },
+              "response": []
+            },
+            {
+              "name": "Review KYC (Reject)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"action\": \"reject\",\n  \"reason\": \"Unclear document images\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/kyc/{{userId}}/review",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "kyc", "{{userId}}", "review"]
+                },
+                "description": "Reject KYC submission"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Trades (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/admin/trades?page=1&limit=20&status=completed",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "admin", "trades"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "status",
+                      "value": "completed"
+                    }
+                  ]
+                },
+                "description": "Get all trades (admin view)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "3. Disputes Management",
+          "item": [
+            {
+              "name": "Get Dispute Stats",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/disputes/stats",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "disputes", "stats"]
+                },
+                "description": "Get dispute statistics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Open Disputes",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/disputes/open",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "disputes", "open"]
+                },
+                "description": "Get all open disputes"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Disputes",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/disputes?page=1&limit=20",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "disputes"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                },
+                "description": "Get all disputes with pagination"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Dispute By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/disputes/{{disputeId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "disputes", "{{disputeId}}"]
+                },
+                "description": "Get dispute details by ID"
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Dispute to Support",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"supportAgentId\": \"{{userId}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/disputes/{{disputeId}}/assign",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "disputes", "{{disputeId}}", "assign"]
+                },
+                "description": "Assign dispute to support agent"
+              },
+              "response": []
+            },
+            {
+              "name": "Resolve Dispute (Buyer Favor)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"resolution\": \"buyer_favor\",\n  \"remarks\": \"Payment proof verified. Releasing crypto to buyer.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/disputes/{{disputeId}}/resolve",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "disputes", "{{disputeId}}", "resolve"]
+                },
+                "description": "Resolve dispute in buyer's favor"
+              },
+              "response": []
+            },
+            {
+              "name": "Resolve Dispute (Seller Favor)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"resolution\": \"seller_favor\",\n  \"remarks\": \"No payment received. Refunding escrow to seller.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/disputes/{{disputeId}}/resolve",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "disputes", "{{disputeId}}", "resolve"]
+                },
+                "description": "Resolve dispute in seller's favor"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "4. Escrow Management",
+          "item": [
+            {
+              "name": "Get Escrow Stats",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow/stats",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow", "stats"]
+                },
+                "description": "Get escrow statistics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Pending Escrow Transactions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow/pending",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow", "pending"]
+                },
+                "description": "Get pending escrow transactions"
+              },
+              "response": []
+            },
+            {
+              "name": "Verify Deposit for Trade",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"isValid\": true,\n  \"remarks\": \"Deposit verified on blockchain with 12 confirmations\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow/{{tradeId}}/verify-deposit",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow", "{{tradeId}}", "verify-deposit"]
+                },
+                "description": "Verify seller's deposit for a trade"
+              },
+              "response": []
+            },
+            {
+              "name": "Release Escrow to Buyer",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"releaseHash\": \"0x1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow/{{tradeId}}/release-to-buyer",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow", "{{tradeId}}", "release-to-buyer"]
+                },
+                "description": "Release escrow to buyer"
+              },
+              "response": []
+            },
+            {
+              "name": "Refund Escrow to Seller",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refundHash\": \"0xffff0000eeee1111dddd2222cccc3333bbbb4444aaaa55559999666677778888\",\n  \"reason\": \"Buyer did not complete payment\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow/{{tradeId}}/refund-to-seller",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow", "{{tradeId}}", "refund-to-seller"]
+                },
+                "description": "Refund escrow to seller (dispute resolution)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Escrow Transactions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow?page=1&limit=20",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                },
+                "description": "Get all escrow transactions"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Escrow Transaction By Hash",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow/hash/0xabcdef1234567890",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow", "hash", "0xabcdef1234567890"]
+                },
+                "description": "Get escrow transaction by hash"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Confirmations",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"confirmations\": 12,\n  \"blockNumber\": 15678901\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow/hash/0xabcdef1234567890/confirmations",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow", "hash", "0xabcdef1234567890", "confirmations"]
+                },
+                "description": "Update blockchain confirmations"
+              },
+              "response": []
+            },
+            {
+              "name": "Get User Escrow Transactions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/escrow/user/{{userId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "escrow", "user", "{{userId}}"]
+                },
+                "description": "Get user's escrow transactions"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "5. Support",
+          "item": [
+            {
+              "name": "Get Support Stats",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/support/stats",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "support", "stats"]
+                },
+                "description": "Get support statistics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Tickets",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/support/my-tickets",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "support", "my-tickets"]
+                },
+                "description": "Get assigned tickets (support agent)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Tickets",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/support/tickets?page=1&limit=20",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "support", "tickets"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                },
+                "description": "Get all support tickets"
+              },
+              "response": []
+            },
+            {
+              "name": "Join Chat as Support",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/support/chat/{{chatId}}/join",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "support", "chat", "{{chatId}}", "join"]
+                },
+                "description": "Join chat as support agent"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "6. Analytics",
+          "item": [
+            {
+              "name": "Get Platform Overview",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/analytics/overview",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "analytics", "overview"]
+                },
+                "description": "Get platform overview analytics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get User Analytics",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/analytics/users?period=month",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "analytics", "users"],
+                  "query": [
+                    {
+                      "key": "period",
+                      "value": "month"
+                    }
+                  ]
+                },
+                "description": "Get user analytics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Trade Analytics",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/analytics/trades?period=week",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "analytics", "trades"],
+                  "query": [
+                    {
+                      "key": "period",
+                      "value": "week"
+                    }
+                  ]
+                },
+                "description": "Get trade analytics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Revenue Analytics",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/analytics/revenue?period=month",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "analytics", "revenue"],
+                  "query": [
+                    {
+                      "key": "period",
+                      "value": "month"
+                    }
+                  ]
+                },
+                "description": "Get revenue analytics"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Listing Analytics",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/platform-b/analytics/listings",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "platform-b", "analytics", "listings"]
+                },
+                "description": "Get listing analytics"
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "UTILITY",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Health check endpoint"
+          },
+          "response": []
+        },
+        {
+          "name": "API Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"]
+            },
+            "description": "Get API information"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

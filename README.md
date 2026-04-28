@@ -830,4 +830,4 @@ Built with modern web technologies for secure and scalable P2P cryptocurrency tr
 
 ---
 
-**Last Updated**: December 2025
+**Last Updated**: May 2026
